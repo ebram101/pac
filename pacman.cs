@@ -6,28 +6,22 @@ using System.Threading.Tasks;
 
 namespace pac
 {
-    public class Pacaman
+    public class Pacman : Entity
     {
-        protected int x;
-        protected int y;
-        protected char[,] maze;
-        protected int score;
+        private int score;
 
-        public Pacaman(int x, int y, char[,] maze)
+        public Pacman(int x, int y, char[,] maze) : base(x, y, maze)
         {
-            this.x = x;
-            this.y = y;
-            this.maze = maze;
             this.score = 0;
         }
 
-        public virtual void draw()
+        public override void draw()
         {
             Console.SetCursorPosition(x, y);
             Console.Write('C');
         }
 
-        public void Move(ConsoleKey key)
+        public virtual void Move(ConsoleKey key)
         {
             int newX = x;
             int newY = y;
@@ -52,7 +46,6 @@ namespace pac
                     break;
             }
 
-            // Check if the new position is within the bounds of the maze
             if (newX >= 0 && newX < maze.GetLength(1) && newY >= 0 && newY < maze.GetLength(0))
             {
                 if (maze[newY, newX] == '.')
@@ -63,43 +56,13 @@ namespace pac
 
                 if (maze[newY, newX] != '#')
                 {
-                    // Update Pacman's position
                     x = newX;
                     y = newY;
                 }
             }
+           
         }
 
-
-        public int GetScore()
-        {
-            return score;
-        }
-
-        public int GetX()
-        {
-            return x;
-        }
-
-        public int GetY()
-        {
-            return y;
-        }
-    }
-
-
-    class DrawPacman : Pacaman
-    {
-        public DrawPacman(int x, int y, char[,] maze) : base(x, y, maze)
-        {
-        }
-
-        public override void draw()
-        {
-            // Specific implementation for drawing Pacman
-            int pacmanCenterX = x + (Console.WindowWidth - maze.GetLength(1)) / 2;
-            Console.SetCursorPosition(pacmanCenterX, y);
-            Console.Write('C');
-        }
+        public int GetScore() => score;
     }
 }
