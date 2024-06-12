@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 
 namespace pac
 {
@@ -16,14 +14,6 @@ namespace pac
             return highScore;
         }
 
-
-
-        /// De UpdateHighScore-functie werkt de hoogste score bij als de nieuwe score hoger is en slaat
-        /// deze op in een bestand.
-
-        //< name="newScore">De parameter `newScore` is een geheel getal dat de score
-        // vertegenwoordigt die moet worden gecontroleerd en mogelijk moet worden bijgewerkt als de
-        // nieuwe hoogste score.
         public static void UpdateHighScore(int newScore)
         {
             if (newScore > highScore)
@@ -32,8 +22,6 @@ namespace pac
                 SaveHighScoreToFile();
             }
         }
-
-        /// De functie `SaveHighScoreToFile` slaat de hoge score op in een bestand in C#.
 
         private static void SaveHighScoreToFile()
         {
@@ -49,11 +37,6 @@ namespace pac
                 Console.WriteLine("Error saving high score: " + ex.Message);
             }
         }
-
-
-        /// De functie 'LoadHighScoreFromFile' leest de hoogste score uit een bestand en werkt de
-        /// variabele 'highScore' bij als het bestand bestaat en de score kan worden geparseerd als een
-        /// geheel getal.
 
         public static void LoadHighScoreFromFile()
         {
@@ -76,5 +59,8 @@ namespace pac
                 Console.WriteLine("Error loading high score: " + ex.Message);
             }
         }
+
+        
+       
     }
 }

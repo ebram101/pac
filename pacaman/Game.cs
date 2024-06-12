@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+
 
 namespace pac
 {
@@ -22,6 +24,11 @@ namespace pac
         private Ghost[] ghosts;
         private int score = 0;
         private int highScore = 0;
+        private bool gameRunning;
+        private Thread gameThread;
+
+
+
 
         public void Run()
         {
@@ -62,6 +69,9 @@ namespace pac
                 if (gameRunning)
                 {
                     InitializeGame();
+                    gameThread = new Thread(GameLoop);
+                    gameThread.Start();
+
 
                     while (gameRunning)
                     {
@@ -94,6 +104,7 @@ namespace pac
                         }
                     }
 
+                    gameThread.Join();
                     Console.Clear();
                     if (IsGameWon())
                     {
@@ -116,6 +127,33 @@ namespace pac
                 }
             }
         }
+        private void GameLoop()
+        {
+            while (gameRunning)
+            {
+                Console.Clear();
+                DrawMaze();
+                pacman.draw();
+                foreach (var ghost in ghosts)
+                {
+                    ghost.draw();
+                    ghost.MoveGhost();
+                }
+
+                if (IsGameOver(pacman.GetX(), pacman.GetY()))
+                {
+                    gameRunning = false;
+                }
+                else if (IsGameWon())
+                {
+                    gameRunning = false;
+                    Console.WriteLine("You have won!");
+                }
+
+                Thread.Sleep(150); // Control the game loop speed
+            }
+        }
+
 
         private void InitializeGame()
         {
