@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Threading;
 
-
 namespace pac
 {
+    /* The Game class in C# contains properties and methods for managing a game with a maze, Pacman,
+    ghosts, score tracking, and game state. */
     class Game
     {
-        private char[,] maze = {
-            {'#','#','#','#','#','#','#','#','#','#','#','#'},
-            {'#','.','.','.','.','.','.','.','.','.','.','#'},
-            {'#','.','#','#','#','#','.','#','#','#','.','#'},
-            {'#','.','#',' ',' ',' ',' ','#',' ','#','.','#'},
-            {'#','.','#','#','#','#','.','#','#','#','.','#'},
-            {'#','.','.','.','.','.','.','.','.','#','.','#'},
-            {'#','#','#','#',' ','.','#','#','.','#','.','#'},
-            {'#','.','.','#',' ','.','#','#','.','#','.','#'},
-            {'#','.','.','#',' ','.','#','.','.','.','.','#'},
-            {'#','.','.','.','.','.','.','#','#','#','#','#'},
-            {'#','#','#','#','#','#','#','#','#','#','#','#'}
-        };
-
+        private Maze maze;
         private Pacman pacman;
         private Ghost[] ghosts;
         private int score = 0;
@@ -27,8 +15,16 @@ namespace pac
         private bool gameRunning;
         private Thread gameThread;
 
-
-
+        /* The `public Game()` constructor in the `Game` class is initializing a new instance of the
+        `Maze` class and assigning it to the private `maze` field within the `Game` class. This
+        means that every time a new `Game` object is created, it will also create a new `Maze`
+        object for that game instance. */
+        /* The code you provided is a C# implementation of a simple Pacman game. Here's a breakdown of
+        what the code is doing: */
+        public Game()
+        {
+            maze = new Maze();
+        }
 
         public void Run()
         {
@@ -37,12 +33,8 @@ namespace pac
 
             while (true)
             {
-                bool gameRunning = false;
                 DrawMenu();
-
-                bool exitRequest = false;
                 char choice = Console.ReadKey().KeyChar;
-
                 switch (choice)
                 {
                     case '1':
@@ -52,18 +44,12 @@ namespace pac
                         Console.WriteLine($"High Score: {highScore}");
                         Console.WriteLine("Press any key to return...");
                         Console.ReadKey();
-                        break;
+                        continue;
                     default:
-                        exitRequest = true;
                         Console.WriteLine("Are you sure you want to leave?");
                         Console.WriteLine("Press any key to exit...");
                         Console.ReadKey();
-                        break;
-                }
-
-                if (exitRequest)
-                {
-                    break;
+                        return;
                 }
 
                 if (gameRunning)
@@ -72,11 +58,10 @@ namespace pac
                     gameThread = new Thread(GameLoop);
                     gameThread.Start();
 
-
                     while (gameRunning)
                     {
                         Console.Clear();
-                        DrawMaze();
+                        maze.Draw();
                         pacman.draw();
                         foreach (var ghost in ghosts)
                         {
@@ -85,22 +70,20 @@ namespace pac
                         }
 
                         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
                         if (keyInfo.Key == ConsoleKey.Escape)
                             break;
+
                         pacman.Move(keyInfo.Key);
                         score = pacman.GetScore();
 
                         if (IsGameOver(pacman.GetX(), pacman.GetY()))
                         {
                             gameRunning = false;
-                            break;
                         }
                         else if (IsGameWon())
                         {
                             gameRunning = false;
                             Console.WriteLine("You have won!");
-                            break;
                         }
                     }
 
@@ -127,12 +110,13 @@ namespace pac
                 }
             }
         }
+
         private void GameLoop()
         {
             while (gameRunning)
             {
                 Console.Clear();
-                DrawMaze();
+                maze.Draw();
                 pacman.draw();
                 foreach (var ghost in ghosts)
                 {
@@ -154,61 +138,33 @@ namespace pac
             }
         }
 
-
         private void InitializeGame()
         {
-            maze = new char[,]
-            {
-                {'#','#','#','#','#','#','#','#','#','#','#','#'},
-                {'#','.','.','.','.','.','.','.','.','.','.','#'},
-                {'#','.','#','#','#','#','.','#','#','#','.','#'},
-                {'#','.','#',' ',' ',' ',' ','#',' ','#','.','#'},
-                {'#','.','#','#','#','#','.','#','#','#','.','#'},
-                {'#','.','.','.','.','.','.','.','.','#','.','#'},
-                {'#','#','#','#',' ','.','#','#','.','#','.','#'},
-                {'#','.','.','#',' ','.','#','#','.','#','.','#'},
-                {'#','.','.','#',' ','.','#','.','.','.','.','#'},
-                {'#','.','.','.','.','.','.','#','#','#','#','#'},
-                {'#','#','#','#','#','#','#','#','#','#','#','#'}
-            };
-            pacman = new Pacman(1, 1, maze);
+            maze = new Maze();
+            pacman = new Pacman(1, 1, maze.GetLayout());
             ghosts = new Ghost[]
             {
-                new Ghost(10, 5, maze),
-                new Ghost(5, 7, maze)
+                new Ghost(10, 5, maze.GetLayout()),
+                new Ghost(5, 7, maze.GetLayout())
             };
             score = 0;
-        }
-
-        private void DrawMaze()
-        {
-            for (int i = 0; i < maze.GetLength(0); i++)
-            {
-                for (int j = 0; j < maze.GetLength(1); j++)
-                {
-                    Console.Write(maze[i, j]);
-                }
-                Console.WriteLine();
-            }
-            Console.SetCursorPosition(0, maze.GetLength(0) + 2);
-            Console.WriteLine($"Score: {score}");
         }
 
         private void DrawMenu()
         {
             string[] menuItems = new string[]
             {
-        "  _______  ",
-        " /  ___  \\ ",
-        "| /     \\ |",
-        "| |     (_|",
-        "| \\______/ ",
-        " \\_______/  ",
-        "",
-        "Welcome to Pacman Game!",
-        "press: 1. Start Game",
-        "press: 2. High Score",
-        "press: 3. Exit"
+                "  _______  ",
+                " /  ___  \\ ",
+                "| /     \\ |",
+                "| |     (_|",
+                "| \\______/ ",
+                " \\_______/  ",
+                "",
+                "Welcome to Pacman Game!",
+                "press: 1. Start Game",
+                "press: 2. High Score",
+                "press: 3. Exit"
             };
 
             foreach (string item in menuItems)
@@ -236,7 +192,7 @@ namespace pac
 
         private bool IsGameWon()
         {
-            return score == 48;
+            return score == maze.CountDots();
         }
     }
 }

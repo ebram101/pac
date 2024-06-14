@@ -4,6 +4,8 @@ using System.Threading;
 
 namespace pac
 {
+    /* The HighScoreManager class in C# manages the high score, updates it if a new score is higher, and
+    saves it to a file. */
     class HighScoreManager
     {
         private static int highScore = 0;
@@ -14,6 +16,12 @@ namespace pac
             return highScore;
         }
 
+
+        /// The UpdateHighScore function in C# updates the high score if the new score is higher and
+        /// saves it to a file.
+
+        /// The `newScore` parameter is an integer value representing the score
+        /// that needs to be checked and potentially updated as the new high score.
         public static void UpdateHighScore(int newScore)
         {
             if (newScore > highScore)
@@ -22,6 +30,9 @@ namespace pac
                 SaveHighScoreToFile();
             }
         }
+
+
+        /// The function `SaveHighScoreToFile` saves the high score to a file in C#.
 
         private static void SaveHighScoreToFile()
         {
@@ -37,6 +48,10 @@ namespace pac
                 Console.WriteLine("Error saving high score: " + ex.Message);
             }
         }
+
+
+        /// The function `LoadHighScoreFromFile` reads the high score from a file and updates the
+        /// `highScore` variable if the file exists and contains a valid integer.
 
         public static void LoadHighScoreFromFile()
         {
