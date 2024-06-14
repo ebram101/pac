@@ -1,10 +1,6 @@
-﻿using System;
-
-namespace pac
+﻿class Maze
 {
-    public class Maze
-    {
-        private char[,] maze = {
+    private char[,] maze = {
             {'#','#','#','#','#','#','#','#','#','#','#','#'},
             {'#','.','.','.','.','.','.','.','.','.','.','#'},
             {'#','.','#','#','#','#','.','#','#','#','.','#'},
@@ -18,23 +14,22 @@ namespace pac
             {'#','#','#','#','#','#','#','#','#','#','#','#'}
         };
 
-        public char[,] GetMaze()
-        {
-            return maze;
-        }
+    public char[,] GetMaze()
+    {
+        return maze;
+    }
 
-        public void DrawMaze(int score)
+    public void DrawMaze(int score)
+    {
+        for (int i = 0; i < maze.GetLength(0); i++)
         {
-            for (int i = 0; i < maze.GetLength(0); i++)
+            for (int j = 0; j < maze.GetLength(1); j++)
             {
-                for (int j = 0; j < maze.GetLength(1); j++)
-                {
-                    Console.Write(maze[i, j]);
-                }
-                Console.WriteLine();
+                Console.Write(maze[i, j]);
             }
-            Console.SetCursorPosition(0, maze.GetLength(0) + 2);
-            Console.WriteLine($"Score: {score}");
+            Console.WriteLine();
         }
+        Console.SetCursorPosition(0, maze.GetLength(0) + 2);
+        Console.WriteLine($"Score: {score}");
     }
 }

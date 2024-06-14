@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/* This C# code defines a namespace `pac` containing an abstract class `Entity`. The `Entity` class has
+protected integer fields `x` and `y`, as well as a 2D character array `maze`. It has a constructor
+that initializes the `x`, `y`, and `maze` fields. */
 namespace pac
 {
     public abstract class Entity
