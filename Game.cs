@@ -6,29 +6,19 @@ namespace pac
 {
     class Game
     {
-        private char[,] maze = {
-            {'#','#','#','#','#','#','#','#','#','#','#','#'},
-            {'#','.','.','.','.','.','.','.','.','.','.','#'},
-            {'#','.','#','#','#','#','.','#','#','#','.','#'},
-            {'#','.','#',' ',' ',' ',' ','#',' ','#','.','#'},
-            {'#','.','#','#','#','#','.','#','#','#','.','#'},
-            {'#','.','.','.','.','.','.','.','.','#','.','#'},
-            {'#','#','#','#',' ','.','#','#','.','#','.','#'},
-            {'#','.','.','#',' ','.','#','#','.','#','.','#'},
-            {'#','.','.','#',' ','.','#','.','.','.','.','#'},
-            {'#','.','.','.','.','.','.','#','#','#','#','#'},
-            {'#','#','#','#','#','#','#','#','#','#','#','#'}
-        };
 
+        private Maze maze;
         private Pacman pacman;
         private Ghost[] ghosts;
         private int score = 0;
         private int highScore = 0;
         private bool gameRunning;
         private Thread gameThread;
+        private readonly object scoreLock = new object(); // Object for locking score access
 
 
 
+            
 
         public void Run()
         {
@@ -72,11 +62,11 @@ namespace pac
                     gameThread = new Thread(GameLoop);
                     gameThread.Start();
 
-
+                   
                     while (gameRunning)
                     {
                         Console.Clear();
-                        DrawMaze();
+                        maze.DrawMaze(score);
                         pacman.draw();
                         foreach (var ghost in ghosts)
                         {
@@ -89,6 +79,8 @@ namespace pac
                         if (keyInfo.Key == ConsoleKey.Escape)
                             break;
                         pacman.Move(keyInfo.Key);
+
+                        lock (scoreLock)
                         score = pacman.GetScore();
 
                         if (IsGameOver(pacman.GetX(), pacman.GetY()))
@@ -115,6 +107,7 @@ namespace pac
                         Console.WriteLine("Game over! You touched a ghost!");
                     }
 
+                    lock (scoreLock)
                     if (score > highScore)
                     {
                         highScore = score;
@@ -132,7 +125,7 @@ namespace pac
             while (gameRunning)
             {
                 Console.Clear();
-                DrawMaze();
+                maze.DrawMaze(score);
                 pacman.draw();
                 foreach (var ghost in ghosts)
                 {
@@ -157,42 +150,17 @@ namespace pac
 
         private void InitializeGame()
         {
-            maze = new char[,]
-            {
-                {'#','#','#','#','#','#','#','#','#','#','#','#'},
-                {'#','.','.','.','.','.','.','.','.','.','.','#'},
-                {'#','.','#','#','#','#','.','#','#','#','.','#'},
-                {'#','.','#',' ',' ',' ',' ','#',' ','#','.','#'},
-                {'#','.','#','#','#','#','.','#','#','#','.','#'},
-                {'#','.','.','.','.','.','.','.','.','#','.','#'},
-                {'#','#','#','#',' ','.','#','#','.','#','.','#'},
-                {'#','.','.','#',' ','.','#','#','.','#','.','#'},
-                {'#','.','.','#',' ','.','#','.','.','.','.','#'},
-                {'#','.','.','.','.','.','.','#','#','#','#','#'},
-                {'#','#','#','#','#','#','#','#','#','#','#','#'}
-            };
-            pacman = new Pacman(1, 1, maze);
+            maze = new Maze();
+            pacman = new Pacman(1, 1, maze.GetMaze());
             ghosts = new Ghost[]
             {
-                new Ghost(10, 5, maze),
-                new Ghost(5, 7, maze)
+                new Ghost(10, 5, maze.GetMaze()),
+                new Ghost(5, 7, maze.GetMaze())
             };
             score = 0;
         }
 
-        private void DrawMaze()
-        {
-            for (int i = 0; i < maze.GetLength(0); i++)
-            {
-                for (int j = 0; j < maze.GetLength(1); j++)
-                {
-                    Console.Write(maze[i, j]);
-                }
-                Console.WriteLine();
-            }
-            Console.SetCursorPosition(0, maze.GetLength(0) + 2);
-            Console.WriteLine($"Score: {score}");
-        }
+       
 
         private void DrawMenu()
         {

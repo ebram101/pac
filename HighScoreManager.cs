@@ -38,7 +38,7 @@ namespace pac
             }
         }
 
-        public static void LoadHighScoreFromFile()
+        public static  void LoadHighScoreFromFile()
         {
             try
             {
